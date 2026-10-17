@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>圆角矩形与正多边形轮廓的数学建模与解析</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='3' width='26' height='26' rx='5' fill='none' stroke='%23222' stroke-width='2'/%3E%3Cpolygon points='16,7 25,11.5 25,20.5 16,25 7,20.5 7,11.5' fill='none' stroke='%23222' stroke-width='2'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" crossorigin="anonymous">
+<style>
+:root{
+  --paper:#fffdf7;
+  --ink:#1b1b1b;
+  --muted:#55554f;
+  --rule:#c9c4b6;
+  --rule-dark:#8a857a;
+  --accent:#9a3412;
+  --block:#f6f3ea;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:"Noto Serif SC","Songti SC","STSong","SimSun",serif;
+  font-size:16px;
+  line-height:1.85;
+  -webkit-font-smoothing:antialiased;
+}
+.page{
+  max-width:920px;
+  margin:0 auto;
+  padding:56px 40px 80px;
+}
+.masthead{
+  border-top:3px solid var(--ink);
+  border-bottom:1px solid var(--ink);
+  padding:10px 0;
+  margin-bottom:34px;
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  font-size:12.5px;
+  color:var(--muted);
+  letter-spacing:.14em;
+}
+.titleblock{text-align:center;margin-bottom:28px;}
+h1.title{
+  font-size:clamp(21px,2.6vw,27px);
+  font-weight:900;
+  letter-spacing:.04em;
+  line-height:1.5;
+  margin-bottom:10px;
+}
+.etitle{
+  font-size:clamp(13px,1.5vw,15px);
+  color:var(--muted);
+  font-style:italic;
+  letter-spacing:.02em;
+  margin-bottom:20px;
+}
+.authorline{font-size:15px;font-weight:600;letter-spacing:.18em;}
+.abstract{
+  border:1px solid var(--rule-dark);
+  background:var(--block);
+  padding:16px 20px;
+  font-size:14.5px;
+  margin:26px 0;
+  text-align:justify;
+}
+.abstract b{font-weight:700;}
+.kw{font-size:14px;margin-bottom:32px;}
+.kw b{color:var(--accent);font-weight:700;}
+h2.sec{
+  font-size:19px;
+  font-weight:700;
+  margin:44px 0 16px;
+  padding-bottom:7px;
+  border-bottom:1px solid var(--rule);
+  letter-spacing:.05em;
+}
+h3.sub{
+  font-size:16.5px;
+  font-weight:700;
+  margin:26px 0 10px;
+}
+p.par{text-align:justify;margin:10px 0;}
+p.par .lead{font-weight:700;}
+.note{
+  font-size:14px;
+  color:var(--muted);
+  border-left:3px solid var(--rule-dark);
+  padding:6px 14px;
+  margin:12px 0;
+  background:var(--block);
+  text-align:justify;
+}
+.eq{
+  text-align:center;
+  margin:16px 0;
+  overflow-x:auto;
+  overflow-y:hidden;
+  padding:4px 0;
+}
+.eq .katex-display{margin:6px 0;}
+.eq .katex{font-size:1.08em;}
+.eqgroup{
+  text-align:center;
+  margin:14px 0;
+  overflow-x:auto;
+  padding:4px 0;
+}
+.eqgroup .katex-display{margin:4px 0;}
+table.syms{
+  width:100%;
+  border-collapse:collapse;
+  margin:14px 0;
+  font-size:14.5px;
+  table-layout:fixed;
+}
+table.syms th{
+  background:var(--block);
+  border:1px solid var(--rule-dark);
+  padding:6px 10px;
+  font-weight:700;
+  text-align:left;
+}
+table.syms td{
+  border:1px solid var(--rule);
+  padding:6px 10px;
+  vertical-align:middle;
+}
+col.c1{width:16%;}
+col.c2{width:38%;}
+col.c3{width:46%;}
+table.cmp{
+  width:100%;
+  border-collapse:collapse;
+  margin:14px 0;
+  font-size:14px;
+  table-layout:fixed;
+}
+table.cmp th{
+  background:var(--block);
+  border:1px solid var(--rule-dark);
+  padding:7px 10px;
+  font-weight:700;
+  text-align:left;
+}
+table.cmp td{
+  border:1px solid var(--rule);
+  padding:7px 10px;
+  vertical-align:top;
+  text-align:justify;
+}
+col.d1{width:13%;}
+col.d2{width:29%;}
+col.d3{width:29%;}
+col.d4{width:29%;}
+.figure{text-align:center;margin:22px 0;}
+.figure svg{max-width:100%;height:auto;}
+.figcap{
+  font-size:13.5px;
+  color:var(--muted);
+  margin-top:8px;
+  text-align:center;
+}
+.footnote{
+  margin-top:46px;
+  padding-top:14px;
+  border-top:1px solid var(--rule);
+  font-size:13px;
+  color:var(--muted);
+  text-align:center;
+}
+@media (max-width:640px){
+  .page{padding:34px 18px 60px;}
+  .masthead{flex-direction:column;gap:4px;}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="masthead">
+    <span>数学建模与解析</span>
+    <span>总结笔记</span>
+  </div>
+
+  <header class="titleblock">
+    <h1 class="title">圆角矩形与正多边形轮廓的数学建模与解析</h1>
+    <div class="etitle">Mathematical Modeling and Analysis of Rounded-Rectangle and Regular-Polygon Profiles</div>
+    <div class="authorline">胡海亮</div>
+  </header>
+
+  <div class="abstract">
+    <b>摘　要：</b>面向平面凸轮廓的解析建模需求，本文对圆角矩形与正多边形两类轮廓建立统一的数学模型：给出参数方程、极坐标向径与隐式距离场三种表示，导出周长、面积、曲率分布与连续阶次等微分几何量，并借助 Gauss–Bonnet 定理统一解释尖角与圆角处的曲率集中与分布规律；进而分析等距曲线的段级结构、角部圆角的几何构造以及离散采样的弦高误差。全部结论为通用数学结果，可服务于轮廓生成、离散与加工轨迹规划的建模环节。
+  </div>
+  <div class="kw"><b>关键词：</b>轮廓建模；参数化；圆角矩形；正多边形；曲率；等距曲线；Gauss–Bonnet 定理</div>
+
+  <!-- ================= 1 引言 ================= -->
+  <h2 class="sec">1　引言与建模框架</h2>
+  <p class="par">工程中大量零件的毛坯与成品轮廓由规则平面曲线构成，其中圆角矩形（四角以圆弧过渡的矩形）与正多边形（含角部圆角的情形）最具代表性。轮廓的解析建模通常按四个层次展开：<span class="lead">几何定义</span>（明确独立参数与约束）、<span class="lead">表示方法</span>（参数 / 极坐标 / 隐式，各有适用场景）、<span class="lead">微分几何量</span>（弧长、面积、曲率、法向量，刻画形状本质）、<span class="lead">离散与偏置</span>（采样、等距曲线，衔接建模与加工）。本文依次完成上述层次，重点强调两类轮廓在曲率分布上的共性——总曲率守恒于 $2\pi$，尖角与圆角仅是曲率的集中与分布之别。</p>
+
+  <!-- ================= 2 数学工具 ================= -->
+  <h2 class="sec">2　平面闭曲线的数学工具</h2>
+  <p class="par"><span class="lead">参数曲线。</span>设正则参数化 $\gamma(t)=\big(x(t),\,y(t)\big)$，$t\in[0,T]$，$|\gamma'(t)|>0$。弧长微元与单位切、法向量为</p>
+  <div class="eq">$$\mathrm{d}s=|\gamma'(t)|\,\mathrm{d}t=\sqrt{x'^2+y'^2}\,\mathrm{d}t,\qquad
+  \boldsymbol T=\frac{\gamma'}{|\gamma'|},\qquad
+  \boldsymbol N=\frac{(-y',\,x')}{|\gamma'|}. \tag{1}$$</div>
+  <p class="par"><span class="lead">曲率。</span>有符号曲率（逆时针取正）及其弧长形式</p>
+  <div class="eq">$$\kappa(t)=\frac{x'y''-y'x''}{(x'^2+y'^2)^{3/2}},\qquad
+  \kappa(s)=\frac{\mathrm{d}\boldsymbol T}{\mathrm{d}s}\cdot\boldsymbol N. \tag{2}$$</div>
+  <p class="par">曲率刻画曲线弯曲的快慢：直线段 $\kappa\equiv 0$，半径为 $R$ 的圆弧 $\kappa\equiv 1/R$。尖角处切线发生跳跃，曲率以 Dirac 型集中于顶点。</p>
+  <p class="par"><span class="lead">面积（Green 公式）。</span>闭曲线围成面积可化为边界上的线积分</p>
+  <div class="eq">$$A=\frac{1}{2}\oint (x\,\mathrm{d}y-y\,\mathrm{d}x)
+  =\frac{1}{2}\int_0^{T}\big(x\,y'-y\,x'\big)\,\mathrm{d}t. \tag{3}$$</div>
+  <p class="par"><span class="lead">极坐标形式。</span>轮廓以向径 $r(\theta)>0$ 表示时，弧长微元、面积与曲率分别化为</p>
+  <div class="eq">$$\mathrm{d}s=\sqrt{r^2+r'^2}\,\mathrm{d}\theta,\qquad
+  A=\frac{1}{2}\int_0^{2\pi} r^2\,\mathrm{d}\theta,\qquad
+  \kappa(\theta)=\frac{r^2+2r'^2-r\,r''}{(r^2+r'^2)^{3/2}}. \tag{4}$$</div>
+  <p class="par"><span class="lead">Gauss–Bonnet 定理（平面分段光滑闭曲线）。</span>曲率的全积分与全部尖角外角之和恒等于 $2\pi$：</p>
+  <div class="eq">$$\oint\kappa\,\mathrm{d}s+\sum_{j}\Delta\theta_j=2\pi, \tag{5}$$</div>
+  <p class="par">其中 $\Delta\theta_j$ 为顶点处的外角（转向角）。光滑闭凸曲线无外角，$\oint\kappa\,\mathrm{d}s=2\pi$。式（5）是贯穿全文的统一约束：无论尖角还是圆角，总曲率守恒。</p>
+  <p class="par"><span class="lead">等距曲线。</span>轮廓沿外法向偏移 $\delta$ 所得等距曲线（偏置曲线）为</p>
+  <div class="eq">$$\gamma_{\delta}=\gamma+\delta\,\boldsymbol N. \tag{6}$$</div>
+  <p class="par">直线段的等距为平行直线，圆弧段的等距为同心圆弧（半径 $R\mp\delta$），尖角处等距曲线需以半径为 $\delta$ 的圆弧过渡。故由直线与圆弧构成的轮廓，其等距曲线可在段级解析构造。</p>
+
+  <!-- ================= 3 圆角矩形 ================= -->
+  <h2 class="sec">3　圆角矩形</h2>
+
+  <h3 class="sub">3.1　几何定义与参数空间</h3>
+  <p class="par">设轮廓外形尺寸为 $2a\times 2b$（$a\ge b>0$），四角为半径 $R$ 的 $90^\circ$ 圆弧，中心在原点。参数约束与派生量为</p>
+  <div class="eq">$$0\le R\le b,\qquad h_x=a-R,\qquad h_y=b-R, \tag{7}$$</div>
+  <p class="par">其中 $(\pm h_x,\,\pm h_y)$ 为四个角弧的圆心，直线段半长分别为 $h_x$、$h_y$。记符号如下：</p>
+
+  <table class="syms">
+    <colgroup><col class="c1"><col class="c2"><col class="c3"></colgroup>
+    <tr><th>符号</th><th>含义</th><th>约束 / 关系</th></tr>
+    <tr><td>$a,\ b$</td><td>轮廓半长、半宽</td><td>$a\ge b>0$，外形 $2a\times 2b$</td></tr>
+    <tr><td>$R$</td><td>圆角半径</td><td>$0\le R\le b$</td></tr>
+    <tr><td>$h_x,\ h_y$</td><td>角弧圆心坐标</td><td>$h_x=a-R$，$h_y=b-R$</td></tr>
+    <tr><td>$L,\ A$</td><td>周长、面积</td><td>见 3.3 节</td></tr>
+  </table>
+
+  <div class="figure">
+  <svg viewBox="0 0 560 420" width="560" role="img" aria-label="圆角矩形参数图">
+    <g stroke="#1b1b1b" fill="none">
+      <line x1="30" y1="205" x2="530" y2="205" stroke="#b9b4a6" stroke-width="1"/>
+      <line x1="260" y1="40" x2="260" y2="390" stroke="#b9b4a6" stroke-width="1"/>
+      <polyline points="520,205 530,205 524,200" stroke="#8a857a" fill="none"/>
+      <polyline points="260,50 260,40 254,46" stroke="#8a857a" fill="none"/>
+      <text x="528" y="222" font-size="15" fill="#55554f" font-family="Noto Serif SC,serif">x</text>
+      <text x="268" y="44" font-size="15" fill="#55554f" font-family="Noto Serif SC,serif">y</text>
+      <text x="244" y="222" font-size="14" fill="#1b1b1b" font-family="Noto Serif SC,serif">O</text>
+      <path d="M400,155 L400,255 A40,40 0 0 1 360,295 L160,295 A40,40 0 0 1 120,255 L120,155 A40,40 0 0 1 160,115 L360,115 A40,40 0 0 1 400,155 Z" stroke="#1b1b1b" stroke-width="2"/>
+      <circle cx="360" cy="255" r="3.5" fill="#1b1b1b"/>
+      <circle cx="160" cy="295" r="3.5" fill="#1b1b1b"/>
+      <circle cx="160" cy="155" r="3.5" fill="#1b1b1b"/>
+      <circle cx="360" cy="155" r="3.5" fill="#1b1b1b"/>
+      <line x1="260" y1="205" x2="360" y2="255" stroke="#9a3412" stroke-width="1" stroke-dasharray="4,3"/>
+      <line x1="260" y1="205" x2="360" y2="155" stroke="#9a3412" stroke-width="1" stroke-dasharray="4,3"/>
+      <rect x="120" y="115" width="280" height="180" stroke="#8a857a" stroke-width="1" stroke-dasharray="5,4"/>
+      <line x1="120" y1="345" x2="400" y2="345" stroke="#1b1b1b" stroke-width="1"/>
+      <polyline points="120,340 120,350" stroke="#1b1b1b"/>
+      <polyline points="400,340 400,350" stroke="#1b1b1b"/>
+      <polygon points="120,345 132,341 132,349" fill="#1b1b1b"/>
+      <polygon points="400,345 388,341 388,349" fill="#1b1b1b"/>
+      <text x="248" y="368" font-size="16" fill="#1b1b1b" font-family="Noto Serif SC,serif">2a</text>
+      <line x1="88" y1="115" x2="88" y2="295" stroke="#1b1b1b" stroke-width="1"/>
+      <polyline points="83,115 93,115" stroke="#1b1b1b"/>
+      <polyline points="83,295 93,295" stroke="#1b1b1b"/>
+      <polygon points="88,115 84,127 92,127" fill="#1b1b1b"/>
+      <polygon points="88,295 84,283 92,283" fill="#1b1b1b"/>
+      <text x="34" y="212" font-size="16" fill="#1b1b1b" font-family="Noto Serif SC,serif">2b</text>
+      <line x1="360" y1="255" x2="400" y2="255" stroke="#9a3412" stroke-width="1.4"/>
+      <polygon points="400,255 388,251 388,259" fill="#9a3412"/>
+      <text x="362" y="248" font-size="15" fill="#9a3412" font-family="Noto Serif SC,serif">R</text>
+      <text x="298" y="250" font-size="13" fill="#9a3412" font-family="Noto Serif SC,serif">hx=a−R</text>
+      <text x="366" y="185" font-size="13" fill="#9a3412" font-family="Noto Serif SC,serif">hy=b−R</text>
+    </g>
+  </svg>
+  <div class="figcap">图 1　圆角矩形参数：半长 a、半宽 b、圆角半径 R，角心距 hₓ=a−R、h_y=b−R</div>
+  </div>
+
+  <h3 class="sub">3.2　三种表示方法</h3>
+  <p class="par"><span class="lead">① 集合论定义。</span>圆角矩形等价于矩形区域与其外法向等距的边界：</p>
+  <div class="eq">$$\partial\!\big(\mathcal{R}_{a,b}\oplus D_R\big),\qquad
+  \mathcal{R}_{a,b}=\{x,y:\ |x|\le a,\ |y|\le b\},\quad D_R=\{\|u\|\le R\}, \tag{8}$$</div>
+  <p class="par">其中 $\oplus$ 为闵可夫斯基和。此定义直接说明角部为何是半径为 $R$ 的圆弧，并天然衔接第 2 节的等距曲线理论。</p>
+  <p class="par"><span class="lead">② 分段参数方程。</span>轮廓由 4 条直线段与 4 段 $90^\circ$ 圆弧首尾相接（逆时针）：</p>
+  <div class="eq">$$\text{直线：}\ x=\pm a\ (|y|\le h_y),\quad y=\pm b\ (|x|\le h_x);\qquad
+  \text{圆弧：}\ \gamma_k(\varphi)=\boldsymbol c_k+R(\cos\varphi,\sin\varphi), \tag{9}$$</div>
+  <p class="par">其中 $\boldsymbol c_k$ 依序取 $(\pm h_x,\pm h_y)$ 四个角心，$\varphi\in[k\pi/2,\,(k+1)\pi/2]$。衔接点处切向连续（$G^1$），曲率不连续（非 $G^2$）。</p>
+  <p class="par"><span class="lead">③ 隐式距离场。</span>轮廓的符号距离函数具有闭式形式：</p>
+  <div class="eq">$$d(x,y)=\big\|\max(|x|-h_x,\ |y|-h_y,\ 0)\big\|+\min\!\big(\max(|x|-h_x,\,|y|-h_y),\,0\big)-R, \tag{10}$$</div>
+  <p class="par">其零水平集 $\{d=0\}$ 恰为轮廓本身。距离场便于进行内外判定与快速求交。</p>
+  <p class="par"><span class="lead">近似表示。</span>以超椭圆 $\left(|x|/a\right)^{2k}+\left(|y|/b\right)^{2k}=1$（$k>1$）可作为光滑近似：$k\to\infty$ 时趋近直角矩形，任意有限 $k$ 时轮廓处处 $C^\infty$ 且曲率连续，但曲率不再有界为 $1/R$——与圆弧角模型相比，属"光滑但曲率分布不同"的近似，两者不可混同。</p>
+
+  <table class="cmp">
+    <colgroup><col class="d1"><col class="d2"><col class="d3"><col class="d4"></colgroup>
+    <tr><th>表示</th><th>结构</th><th>连续性</th><th>适用场景</th></tr>
+    <tr><td>参数方程（分段）</td><td>直线 + 圆弧，段级解析</td><td>$G^1$，曲率跳跃</td><td>轮廓生成、等距构造</td></tr>
+    <tr><td>极坐标向径 $r(\theta)$</td><td>按角度单值化</td><td>$C^0$，分段可微</td><td>极坐标展开、角度驱动</td></tr>
+    <tr><td>隐式距离场</td><td>水平集</td><td>全局解析</td><td>内外判定、求交</td></tr>
+    <tr><td>超椭圆近似</td><td>单式光滑函数</td><td>$C^\infty$，曲率连续</td><td>连续光顺建模</td></tr>
+  </table>
+
+  <h3 class="sub">3.3　周长与面积</h3>
+  <p class="par">由弧长积分与 Green 面积公式分段求积：</p>
+  <div class="eq">$$L=\oint\mathrm{d}s=4(a-R)+4(b-R)+2\pi R=4(a+b)+(2\pi-8)R, \tag{11}$$</div>
+  <div class="eq">$$A=\frac{1}{2}\oint(x\,\mathrm{d}y-y\,\mathrm{d}x)=4ab-(4-\pi)R^{2}. \tag{12}$$</div>
+  <p class="par">几何解释：周长中直线部分随 $R$ 缩短 $8R$，圆弧净贡献 $2\pi R$；面积等于矩形面积减去四角切除量 $(4-\pi)R^2$（每角 $R^2-\pi R^2/4$）。</p>
+
+  <h3 class="sub">3.4　曲率分布与退化</h3>
+  <div class="eq">$$\kappa(s)=\begin{cases}0, & \text{直线段},\\[2mm] 1/R, & \text{圆弧段},\end{cases}
+  \qquad \oint\kappa\,\mathrm{d}s=4\cdot\frac{\pi}{2}=2\pi. \tag{13}$$</div>
+  <p class="par">8 个衔接点处 $\kappa$ 跳跃（$0\leftrightarrow 1/R$），总曲率恒为 $2\pi$，满足式（5）。退化情形：</p>
+  <div class="note">① $R=0$：退化为直角矩形，尖角外角 $4\times\pi/2=2\pi$；② $R=b$（$a>b$）：四段角弧两两合并为端半圆，退化为端部半圆的腰形轮廓；③ $a=b=R$：退化为整圆。三种情形下式（5）均自动成立，体现总曲率守恒。</div>
+
+  <h3 class="sub">3.5　极坐标向径</h3>
+  <p class="par">对角度 $\theta$，射线与轮廓交点的向径 $r(\theta)$：直线段为割线形式，圆弧段为圆与射线方程的凸支解：</p>
+  <div class="eq">$$\text{直线 }x=a:\quad r(\theta)=\frac{a}{\cos\theta};\qquad
+  \text{圆弧（角心 }\boldsymbol c\text{）}:\quad
+  r(\theta)=\boldsymbol c\cdot\boldsymbol e_\theta+\sqrt{R^2-(\boldsymbol c\times\boldsymbol e_\theta)^2},\quad \boldsymbol e_\theta=(\cos\theta,\sin\theta). \tag{14}$$</div>
+  <p class="par">式中利用了恒等式 $(\boldsymbol c\cdot\boldsymbol e_\theta)^2+(\boldsymbol c\times\boldsymbol e_\theta)^2=|\boldsymbol c|^2$。$r(\theta)$ 在轮廓上分段连续可微，是"角度—向径"表格化表示的基础。</p>
+
+  <!-- ================= 4 正多边形 ================= -->
+  <h2 class="sec">4　正多边形</h2>
+
+  <h3 class="sub">4.1　几何定义</h3>
+  <p class="par">设边数 $n\ge 3$，外接圆半径 $R_0$，则内切圆半径（边心距）、边长、中心角、内角分别为</p>
+  <div class="eq">$$r_0=R_0\cos\frac{\pi}{n},\qquad s=2R_0\sin\frac{\pi}{n},\qquad
+  \Delta\theta=\frac{2\pi}{n},\qquad \alpha=\frac{(n-2)\pi}{n}, \tag{15}$$</div>
+  <p class="par">顶点坐标与边 $k$ 的参数方程：</p>
+  <div class="eq">$$\boldsymbol z_k=R_0\,\mathrm{e}^{\mathrm{i}\theta_k},\quad \theta_k=\frac{2\pi k}{n};\qquad
+  \gamma_k(t)=(1-t)\boldsymbol z_k+t\,\boldsymbol z_{k+1},\quad t\in[0,1]. \tag{16}$$</div>
+
+  <div class="figure">
+  <svg viewBox="0 0 560 420" width="560" role="img" aria-label="正六边形参数图">
+    <g stroke="#1b1b1b" fill="none">
+      <line x1="30" y1="205" x2="530" y2="205" stroke="#b9b4a6" stroke-width="1"/>
+      <line x1="260" y1="40" x2="260" y2="390" stroke="#b9b4a6" stroke-width="1"/>
+      <text x="528" y="222" font-size="15" fill="#55554f" font-family="Noto Serif SC,serif">x</text>
+      <text x="268" y="44" font-size="15" fill="#55554f" font-family="Noto Serif SC,serif">y</text>
+      <text x="244" y="222" font-size="14" fill="#1b1b1b" font-family="Noto Serif SC,serif">O</text>
+      <circle cx="260" cy="205" r="150" stroke="#9a3412" stroke-width="1" stroke-dasharray="1.5,3.5"/>
+      <circle cx="260" cy="205" r="130" stroke="#8a857a" stroke-width="1" stroke-dasharray="5,4"/>
+      <polygon points="410,205 335,334.9 185,334.9 110,205 185,75.1 335,75.1" stroke="#1b1b1b" stroke-width="2"/>
+      <line x1="260" y1="205" x2="260" y2="75.1" stroke="#9a3412" stroke-width="1.2" stroke-dasharray="4,3"/>
+      <text x="266" y="140" font-size="13.5" fill="#9a3412" font-family="Noto Serif SC,serif">r₀</text>
+      <line x1="260" y1="205" x2="410" y2="205" stroke="#1b1b1b" stroke-width="1.2" stroke-dasharray="4,3"/>
+      <text x="322" y="196" font-size="13.5" fill="#1b1b1b" font-family="Noto Serif SC,serif">R₀</text>
+      <path d="M370,205 A110,110 0 0 1 305,96" fill="none" stroke="#55554f" stroke-width="1.2"/>
+      <text x="352" y="148" font-size="13" fill="#55554f" font-family="Noto Serif SC,serif">2π/n</text>
+      <line x1="440" y1="75.1" x2="440" y2="334.9" stroke="#1b1b1b" stroke-width="1"/>
+      <polyline points="435,75.1 445,75.1" stroke="#1b1b1b"/>
+      <polyline points="435,334.9 445,334.9" stroke="#1b1b1b"/>
+      <polygon points="440,75.1 436,87 444,87" fill="#1b1b1b"/>
+      <polygon points="440,334.9 436,323 444,323" fill="#1b1b1b"/>
+      <text x="452" y="212" font-size="15" fill="#1b1b1b" font-family="Noto Serif SC,serif">2r₀</text>
+    </g>
+  </svg>
+  <div class="figcap">图 2　正多边形（六边形）参数：外接圆半径 R₀、边心距 r₀=R₀cos(π/n)、对边距 2r₀、中心角 2π/n</div>
+  </div>
+
+  <h3 class="sub">4.2　极坐标方程</h3>
+  <p class="par">边 $k$ 到原点距离恒为 $r_0$，其外法线方向为 $\bar\theta_k=(2k+1)\pi/n$，故扇区 $\theta\in[\theta_k,\theta_{k+1}]$ 内向径满足 $r(\theta)\cos(\theta-\bar\theta_k)=r_0$，即</p>
+  <div class="eq">$$r(\theta)=\frac{r_0}{\cos(\theta-\bar\theta_k)},\qquad
+  \theta\in[\theta_k,\ \theta_{k+1}],\quad \bar\theta_k=\frac{(2k+1)\pi}{n}. \tag{17}$$</div>
+  <p class="par">由式（4）弧长积分可验证单边弧长：$\int\sqrt{r^2+r'^2}\,\mathrm{d}\theta=2r_0\tan(\pi/n)=s$。</p>
+
+  <h3 class="sub">4.3　周长与面积</h3>
+  <div class="eq">$$P=n\,s=2nR_0\sin\frac{\pi}{n}=2n\,r_0\tan\frac{\pi}{n}, \tag{18}$$</div>
+  <div class="eq">$$A=\frac{1}{2}\sum_k\boldsymbol z_k\times\boldsymbol z_{k+1}
+  =\frac{1}{2}nR_0^{2}\sin\frac{2\pi}{n}=n\,r_0^{2}\tan\frac{\pi}{n}. \tag{19}$$</div>
+  <p class="par">面积还可由 $n$ 个全等三角形（底 $s$、高 $r_0$）叠加得到：$A=n\cdot\frac{1}{2}s\,r_0=n\,r_0^2\tan(\pi/n)$，与式（19）一致。</p>
+
+  <h3 class="sub">4.4　尖角与曲率集中</h3>
+  <p class="par">边上 $\kappa\equiv 0$，曲率全部集中于 $n$ 个顶点，外角均为 $2\pi/n$，由式（5）：</p>
+  <div class="eq">$$\oint\kappa\,\mathrm{d}s+\sum_{k=0}^{n-1}\frac{2\pi}{n}=0+2\pi=2\pi. \tag{20}$$</div>
+  <p class="par">向径函数 $r(\theta)$ 在顶点处连续但不可微（导数跳跃），对应曲率呈 Dirac 型集中——尖角是曲率"压缩到一点"的极限情形。</p>
+
+  <h3 class="sub">4.5　角部圆角的几何构造</h3>
+  <p class="par">将每个尖角替换为半径 $r$ 的圆弧，要求圆弧与相邻两边相切（圆角 / 倒圆建模）。设圆心位于内角平分线上、距顶点 $d$，则垂距条件给出</p>
+  <div class="eq">$$d\sin\frac{\alpha}{2}=r\quad\Longrightarrow\quad
+  d=r\csc\frac{\alpha}{2}=\frac{r}{\cos(\pi/n)},\qquad
+  l=r\cot\frac{\alpha}{2}=r\tan\frac{\pi}{n}, \tag{21}$$</div>
+  <p class="par">其中 $l$ 为切点到顶点的距离（每边由此缩短 $2l$），圆弧幅角恰为外角 $\pi-\alpha=2\pi/n$。</p>
+
+  <div class="figure">
+  <svg viewBox="0 0 400 280" width="400" role="img" aria-label="角部圆角构造">
+    <g stroke="#1b1b1b" fill="none">
+      <line x1="180" y1="100" x2="180" y2="30" stroke="#8a857a" stroke-width="1" stroke-dasharray="4,3"/>
+      <line x1="180" y1="40" x2="128" y2="70" stroke="#1b1b1b" stroke-width="2"/>
+      <line x1="180" y1="40" x2="232" y2="70" stroke="#1b1b1b" stroke-width="2"/>
+      <path d="M128,70 A60,60 0 0 1 232,70" stroke="#1b1b1b" stroke-width="2"/>
+      <circle cx="180" cy="100" r="3.5" fill="#1b1b1b"/>
+      <line x1="180" y1="100" x2="128" y2="70" stroke="#9a3412" stroke-width="1.2"/>
+      <circle cx="180" cy="40" r="3" fill="#9a3412"/>
+      <circle cx="128" cy="70" r="3" fill="#55554f"/>
+      <circle cx="232" cy="70" r="3" fill="#55554f"/>
+      <path d="M154,55 A30,30 0 0 1 206,55" stroke="#55554f" stroke-width="1.2"/>
+      <text x="172" y="42" font-size="13" fill="#55554f" font-family="Noto Serif SC,serif">α</text>
+      <text x="188" y="30" font-size="13.5" fill="#1b1b1b" font-family="Noto Serif SC,serif">V</text>
+      <text x="96" y="72" font-size="13.5" fill="#55554f" font-family="Noto Serif SC,serif">T₁</text>
+      <text x="238" y="72" font-size="13.5" fill="#55554f" font-family="Noto Serif SC,serif">T₂</text>
+      <text x="184" y="118" font-size="13.5" fill="#1b1b1b" font-family="Noto Serif SC,serif">c</text>
+      <text x="136" y="96" font-size="13" fill="#9a3412" font-family="Noto Serif SC,serif">r</text>
+    </g>
+  </svg>
+  <div class="figcap">图 3　角部圆角构造：圆心在角平分线上、距顶点 d=r·csc(α/2)，切点距 l=r·cot(α/2)，弧幅角 = 外角</div>
+  </div>
+
+  <p class="par">圆角后周长与面积：</p>
+  <div class="eq">$$L_r=2n(r_0-r)\tan\frac{\pi}{n}+2\pi r, \tag{22}$$</div>
+  <div class="eq">$$A_r=n\,r_0^{2}\tan\frac{\pi}{n}-n\,r^{2}\Big(\tan\frac{\pi}{n}-\frac{\pi}{n}\Big). \tag{23}$$</div>
+  <p class="par">式（23）中每角切除量为三角形 $V T_1T_2$ 与扇形（幅角 $2\pi/n$）之差，化简即 $r^2[\tan(\pi/n)-\pi/n]$。总曲率保持：$n$ 段圆弧各贡献 $(2\pi/n)\cdot r\cdot(1/r)=2\pi$。退化：$r\to 0$ 复原尖角多边形；$r\to r_0$ 时圆弧圆心退至原点，轮廓收敛为半径 $r_0$ 的圆。</p>
+  <div class="note">圆角化的本质是曲率的"正则化"：把集中于顶点的外角 $\Delta\theta$ 摊布到一段弧长为 $r\Delta\theta$ 的圆弧上（该弧总曲率恰为 $\Delta\theta$），连续性由 $G^0$ 提升为 $G^1$，而总曲率 $2\pi$ 不变——这正是式（5）在两类轮廓间的统一体现。</div>
+
+  <!-- ================= 5 等距与离散 ================= -->
+  <h2 class="sec">5　等距曲线与离散化</h2>
+  <p class="par"><span class="lead">等距曲线的段级结构。</span>由式（6），对直线与圆弧构成的轮廓：直线段等距后仍为直线（偏移 $\delta$），圆弧段等距后为同心圆弧（半径 $R\mp\delta$ 或 $r\mp\delta$），衔接关系与切向连续保持。对含尖角的轮廓，尖角等距后以半径 $\delta$ 的圆弧过渡——加工中即以刀具半径自然形成该过渡。</p>
+  <p class="par"><span class="lead">离散采样与弦高误差。</span>以弧长步长 $\Delta s$ 采样轮廓，局部曲率半径为 $\rho$ 时，弦线与弧线间的最大偏差（弦高误差）为</p>
+  <div class="eq">$$\varepsilon=\rho\Big(1-\cos\frac{\Delta s}{2\rho}\Big)\approx\frac{\Delta s^{2}}{8\rho}, \tag{24}$$</div>
+  <p class="par">故曲率半径小（$\rho$ 小）的区段需更密的采样。角度均匀采样时，直线段与圆弧段的合理步长由式（24）反推。</p>
+  <p class="par"><span class="lead">模型校核。</span>闭式结果（11）（12）（18）（19）（22）（23）可与数值积分对照：周长用弧长积分、面积用式（3）的 Green 线积分按采样点求和，两者应一致；同时以式（5）的总曲率检验离散轮廓的几何合法性。</p>
+
+  <!-- ================= 6 结语 ================= -->
+  <h2 class="sec">6　结语</h2>
+  <p class="par">本文给出圆角矩形与正多边形（含角部圆角）的完整解析建模：参数、极坐标与隐式三种表示互为补充；周长、面积、曲率均为闭式；Gauss–Bonnet 定理揭示尖角与圆角在总曲率上的统一性；等距曲线在直线—圆弧结构下段级可解，弦高误差为离散采样提供定量依据。上述结果构成这类轮廓"定义—表示—量算—离散"全链条的数学基础。</p>
+
+  <div class="footnote">
+    本文为胡海亮个人学习总结笔记，所列公式均为通用数学结论。
+  </div>
+
+</div>
+
+<script>
+(function(){
+  function opts(){
+    return {
+      delimiters:[
+        {left:'$$',right:'$$',display:true},
+        {left:'\\(',right:'\\)',display:false},
+        {left:'$',right:'$',display:false}
+      ],
+      throwOnError:false,
+      strict:false
+    };
+  }
+  function renderAll(){
+    if(window.katex && window.renderMathInElement){
+      renderMathInElement(document.body, opts());
+    }
+  }
+  function loadFallback(){
+    if(window.katex) return;
+    var base='https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/';
+    var l=document.createElement('link');
+    l.rel='stylesheet'; l.href=base+'katex.min.css';
+    document.head.appendChild(l);
+    var s=document.createElement('script');
+    s.src=base+'katex.min.js';
+    s.onload=function(){
+      var a=document.createElement('script');
+      a.src=base+'contrib/auto-render.min.js';
+      a.onload=renderAll;
+      document.head.appendChild(a);
+    };
+    document.head.appendChild(s);
+  }
+  window.addEventListener('load', function(){
+    setTimeout(function(){
+      if(window.katex && window.renderMathInElement){ renderAll(); }
+      else { loadFallback(); }
+    }, 600);
+  });
+})();
+</script>
+</body>
+</html>
+<!-- （注：内容由AI生成） -->
